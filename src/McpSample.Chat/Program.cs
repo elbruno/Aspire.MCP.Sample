@@ -6,6 +6,13 @@ using ModelContextProtocol.Protocol.Transport;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// *************************************************************************
+
+// Set the API service name from the Aspire configuration
+string apiServiceName = "aspnetsseserver";
+
+// *************************************************************************
+
 // add aspire service defaults
 builder.AddServiceDefaults();
 
@@ -30,19 +37,21 @@ builder.Services.AddSingleton<IMcpClient>(sp =>
     McpClientOptions mcpClientOptions = new()
     { ClientInfo = new() { Name = "AspNetCoreSseClient", Version = "1.0.0" } };
 
-    var client = new HttpClient();
-    client.BaseAddress = new("https+http://aspnetsseserver");
+    var client = new HttpClient
+    {
+        BaseAddress = new($"https+http://{apiServiceName}")
+    };
 
     // can't use the service discovery for ["https +http://aspnetsseserver"]
-    // fix: read the environment value for the key 'services__aspnetsseserver__https__0' to get the url for the aspnet core sse server
-    var serviceName = "aspnetsseserver";
-    var name = $"services__{serviceName}__https__0";
-    var url = Environment.GetEnvironmentVariable(name) + "/sse";
+    // fix: read the environment value for the key 'services__aspnetsseserver__https__0' to get the url for the aspnet core sse server    
+    var name = $"services__{apiServiceName}__https__0";
+    var baseUrl = Environment.GetEnvironmentVariable(name);
+    var url =  baseUrl + "/sse";
 
     SseClientTransportOptions sseTransportOptions = new()
     {
-        //Endpoint = new Uri("https+http://aspnetsseserver")
-        Endpoint = client.BaseAddress
+        Endpoint = new Uri(url)
+        // Endpoint = client.BaseAddress
     };
 
     SseClientTransport sseClientTransport = new(transportOptions: sseTransportOptions);
