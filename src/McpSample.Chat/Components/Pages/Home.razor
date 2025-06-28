@@ -152,7 +152,7 @@
         tools = await McpClient.ListToolsAsync();
 
         // system message
-        ChatMessages.Add(new ChatMessage(ChatRole.System, "You are a helpful assistant. You always replies using text and emojis. You never generate HTML or Markdown. You only do what the user ask you to do. If you don't have a function to answer a question, you just answer que question"));
+        ChatMessages.Add(new ChatMessage(ChatRole.System, "You are a helpful assistant. You always replies using text and emojis. You never generate HTML or Markdown. You only do what the user ask you to do. If you don't have a function to answer a question, you just answer the question"));
     }
 
     private async Task AskQuestion(MouseEventArgs e)
